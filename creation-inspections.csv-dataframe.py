@@ -15,9 +15,14 @@ scale_id = np.random.randint(1, 2, size=16) #Scale ID - 1 or 2 Scales per Stall
 inspector_id = np.random.randint(1, 6, size=16) #Inspector ID - 1-5 Inspectors
 
 #certifcation date logic
-is_certified = None #Check if inspector is certified
-last_certs_date = None #latest cert date for inspector
-is_certified = None #Check if inspector last cert date is within 365 days, else expired
+randdays = np.random.randint(30, 501, size=16) #random amount of days for synthetic data generation
+last_cert_date = (date - pd.to_timedelta(randdays, unit="D")).strftime("%Y-%m-%d")
+is_certified = np.where(randdays <= 365, "Y", "N") #Check if inspector last cert date is within 365 days, else expired
+
+
+#Convert date as data to make sure it can run
+date_as_data = date.strftime("%Y-%m-%d")
+
 
 #Weight calculation
 nominal_weight_g = None #test weights
