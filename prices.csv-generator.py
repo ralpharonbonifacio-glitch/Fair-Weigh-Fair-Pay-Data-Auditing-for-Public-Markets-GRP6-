@@ -5,16 +5,15 @@ np.random.seed(2)
 
 'For generating prices.csv'
 
-#random amount of days chosen between 60-120
-days = np.random.randint(60, 121)
+#using the code already written in inspecctions.csv
+df_inspections = pd.read_csv("inspections.csv")
 
-# Inspection dates, starts at 2026-01-01, weekly every Thursday, same as inspections.csv, 
-# strftime to make sure its a string in format Year-month-day
-date = pd.date_range(start='2026-01-01', periods=days, freq='W-THU').strftime("%Y-%m-%d")
+# Extract the exact dates and count from inspections
+date = df_inspections['date'].unique()
+days = len(date) #makes sure it has the exact same days as inspections.csv
 
+market_id = df_inspections['market_id'].values # Match market ID too
 
-
-market_id = np.random.randint(1, 6, size=days) #Market ID - 1-5 Markets
 
 #commodities logic
 #commodity list, 8-12 choices
