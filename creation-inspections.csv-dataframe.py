@@ -5,8 +5,8 @@ np.random.seed(1)
 
 'For generating inspections.csv'
 
-#random amount of days chosen between 90-120
-days = np.random.randint(90, 121)
+#random amount of days chosen between 60-120
+days = np.random.randint(60, 121)
 
 # Inspection dates, starts at 2026-01-01, 16 weeks, every Thursday
 date = pd.date_range(start='2026-01-01', periods=days, freq='W-THU')
@@ -31,7 +31,7 @@ date_as_data = date.strftime("%Y-%m-%d")
 #Nominal Weight tests - 100g, 250g, 500g, 1000g
 nominal_weight_g = np.random.choice([100, 250, 500, 1000], size=days)
 
-#Error percentage, Minimum and maximum of at least 70% to simulate possible fraud
+#Error percentage, Minimum and maximum of at least and at most 75% to simulate possible fraud
 error_perc = np.random.uniform(-0.75, 0.75, size=days)
 
 #Reading Weight from using scale, difference varies based on error percentage
