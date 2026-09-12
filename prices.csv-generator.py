@@ -8,8 +8,11 @@ np.random.seed(2)
 #random amount of days chosen between 60-120
 days = np.random.randint(60, 121)
 
-# Inspection dates, starts at 2026-01-01, weekly every Thursday, same as inspections.csv 
-date = pd.date_range(start='2026-01-01', periods=days, freq='W-THU')
+# Inspection dates, starts at 2026-01-01, weekly every Thursday, same as inspections.csv, 
+# strftime to make sure its a string in format Year-month-day
+date = pd.date_range(start='2026-01-01', periods=days, freq='W-THU').strftime("%Y-%m-%d")
+
+
 
 market_id = np.random.randint(1, 6, size=days) #Market ID - 1-5 Markets
 
@@ -55,3 +58,13 @@ maxprice = [commodity_price_minmax[x][1] for x in commodity]
 #calculate average price per kg from each unique commodity
 avg_price_per_kg = np.round(np.random.uniform(minprice, maxprice), 2)
 
+df_prices = pd.DataFrame({
+    'date': date,
+    'market_id': market_id,
+    'commodity': commodity,
+    'avg_price_per_kg': avg_price_per_kg
+})
+
+df_prices.to_csv("prices.csv", index=False)
+print("Generated prices.csv")
+print(df_prices.head())
