@@ -24,6 +24,12 @@ is_certified = np.where(randdays <= 365, "Y", "N") #Check if inspector last cert
 date_as_data = date.strftime("%Y-%m-%d")
 
 
-#Weight calculation
-nominal_weight_g = None #test weights
-reading_g = None #Actual weight reading after test
+#weight calibration
+#Nominal Weight tests - 100g, 250g, 500g, 1000g
+nominal_weight_g = np.random.choice([100, 250, 500, 1000], size=16)
+
+#Error percentage, Minimum and maximum of at least 70% to simulate possible fraud
+error_perc = np.random.uniform(-0.75, 0.75, size=16)
+
+#Reading Weight from using scale, difference varies based on error percentage
+reading_g = np.round(nominal_weight_g * (1 + error_perc), 2)
