@@ -8,7 +8,7 @@ np.random.seed(1)
 #random amount of days chosen between 60-120
 days = np.random.randint(60, 121)
 
-# Inspection dates, starts at 2026-01-01, 16 weeks, every Thursday
+# Inspection dates, starts at 2026-01-01, weekly every Thursday
 date = pd.date_range(start='2026-01-01', periods=days, freq='W-THU')
 
 #IDs
@@ -53,3 +53,16 @@ df_inspections = pd.DataFrame({
 # 7. Save to CSV
 df_inspections.to_csv("inspections.csv", index=False)
 print(df_inspections.head())
+
+
+#commodities logic
+commodity_list = [ 'Rice', 'Chicken', 'Pork', 'Beef', 
+                  'Bangus', 'Tomatoes', 'Onions', 'Garlic', 
+                  'Eggplant', 'Cabbage', 'Carrots', 'Potatoes', 
+                  'Tilapia', 'Ginger']
+
+
+commodity_amount = np.random.randint(8, 13) #Commodity - 8-12 Commodities
+
+
+avg_price_per_kg = None
