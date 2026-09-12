@@ -9,9 +9,10 @@ np.random.seed(2)
 df_inspections = pd.read_csv("inspections.csv")
 
 # Extract the exact dates and count from inspections
-date = df_inspections['date'].unique()
-days = len(date) #makes sure it has the exact same days as inspections.csv
+inspectiondate = pd.to_datetime(df_inspections['date']).unique()
+days = len(inspectiondate) #makes sure it has the exact same days as inspections.csv
 
+date = (inspectiondate + pd.to_timedelta(np.random.randint(-3, 3, size=days), unit='D')).strftime('%Y-%m-%d')
 market_id = df_inspections['market_id'].values # Match market ID too
 
 
