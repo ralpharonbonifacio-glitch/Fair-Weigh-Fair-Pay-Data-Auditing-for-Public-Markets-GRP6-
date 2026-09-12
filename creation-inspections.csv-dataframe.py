@@ -33,3 +33,20 @@ error_perc = np.random.uniform(-0.75, 0.75, size=16)
 
 #Reading Weight from using scale, difference varies based on error percentage
 reading_g = np.round(nominal_weight_g * (1 + error_perc), 2)
+
+#Create dataframe
+df_inspections = pd.DataFrame({
+    "date": date_as_data,
+    "market_id": market_id,
+    "stall_id": stall_id,
+    "scale_id": scale_id,
+    "nominal_weight_g": nominal_weight_g,
+    "reading_g": reading_g,
+    "is_certified": is_certified,
+    "last_cert_date": last_cert_date,
+    "inspector_id": inspector_id
+})
+
+# 7. Save to CSV
+df_inspections.to_csv("inspections.csv", index=False)
+print(df_inspections.head())
