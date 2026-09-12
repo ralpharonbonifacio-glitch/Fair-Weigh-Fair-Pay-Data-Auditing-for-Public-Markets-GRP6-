@@ -52,17 +52,5 @@ df_inspections = pd.DataFrame({
 
 # 7. Save to CSV
 df_inspections.to_csv("inspections.csv", index=False)
+print("inspections.csv created")
 print(df_inspections.head())
-
-
-#commodities logic
-commodity_list = [ 'Rice', 'Chicken', 'Pork', 'Beef', 
-                  'Bangus', 'Tomatoes', 'Onions', 'Garlic', 
-                  'Eggplant', 'Cabbage', 'Carrots', 'Potatoes', 
-                  'Tilapia', 'Ginger']
-
-
-commodity_amount = np.random.randint(8, 13) #Commodity - 8-12 Commodities
-
-
-avg_price_per_kg = None
