@@ -14,7 +14,7 @@ date = pd.date_range(start='2026-01-01', periods=days, freq='W-THU')
 #IDs
 market_id = np.random.randint(1, 6, size=days) #Market ID - 1-5 Markets
 stall_id = np.random.randint(30, 51,size=days) #Stall ID - 30-50 Stalls
-scale_id = np.random.randint(1, 2, size=days) #Scale ID - 1 or 2 Scales per Stall
+scale_id = np.random.randint(1, 3, size=days) #Scale ID - 1 or 2 Scales per Stall
 inspector_id = np.random.randint(1, 6, size=days) #Inspector ID - 1-5 Inspectors
 
 #certifcation date logic
