@@ -83,3 +83,18 @@ print("Market with highest mean error:",
 
 print("Market with lowest mean error:",
       lowest_mean_market)
+
+# Calculate under-weighing and over-weighing per market
+under_by_market = np.where(market_mask, under_mask[:, np.newaxis], False)
+over_by_market = np.where(market_mask, over_mask[:, np.newaxis], False)
+
+under_count = np.sum(under_by_market, axis=0)
+over_count = np.sum(over_by_market, axis=0)
+
+under_percentage = (under_count / total_count) * 100
+over_percentage = (over_count / total_count) * 100
+
+print("Under-weighing count:", under_count)
+print("Over-weighing count:", over_count)
+print("Under-weighing percentage:", under_percentage)
+print("Over-weighing percentage:", over_percentage)
