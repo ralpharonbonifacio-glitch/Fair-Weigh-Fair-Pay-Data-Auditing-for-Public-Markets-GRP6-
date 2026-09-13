@@ -98,3 +98,30 @@ print("Under-weighing count:", under_count)
 print("Over-weighing count:", over_count)
 print("Under-weighing percentage:", under_percentage)
 print("Over-weighing percentage:", over_percentage)
+
+# Create final market summary
+summary = np.column_stack((
+    markets,
+    mean_error,
+    median_error,
+    ci_lower,
+    ci_upper,
+    outside_percentage,
+    under_percentage,
+    over_percentage
+))
+
+print("\nFinal Market Summary:")
+print("Market | Mean | Median | CI Lower | CI Upper | Outside % | Under % | Over %")
+
+for row in summary:
+    print(
+        f"{int(row[0])} | "
+        f"{row[1]:.2f} | "
+        f"{row[2]:.2f} | "
+        f"{row[3]:.2f} | "
+        f"{row[4]:.2f} | "
+        f"{row[5]:.2f}% | "
+        f"{row[6]:.2f}% | "
+        f"{row[7]:.2f}%"
+    )
