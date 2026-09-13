@@ -55,3 +55,17 @@ ci_upper = mean_error + margin_error
 
 print("95% CI lower:", ci_lower)
 print("95% CI upper:", ci_upper)
+
+# Calculate fraction of inspections outside tolerance per market
+outside_by_market = np.where(market_mask, outside_mask[:, np.newaxis], False)
+
+outside_count = np.sum(outside_by_market, axis=0)
+total_count = np.sum(market_mask, axis=0)
+
+outside_fraction = outside_count / total_count
+outside_percentage = outside_fraction * 100
+
+print("Inspections outside tolerance:", outside_count)
+print("Total inspections per market:", total_count)
+print("Fraction outside tolerance:", outside_fraction)
+print("Percentage outside tolerance:", outside_percentage)
