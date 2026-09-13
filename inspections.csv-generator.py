@@ -15,13 +15,20 @@ date = pd.date_range(start='2026-01-01', periods=days, freq='W-THU')
 market_id = np.random.randint(1, 6, size=days) #Market ID - 1-5 Markets
 stall_id = np.random.randint(30, 51,size=days) #Stall ID - 30-50 Stalls
 scale_id = np.random.randint(1, 3, size=days) #Scale ID - 1 or 2 Scales per Stall
-inspector_id = np.random.randint(1, 6, size=days) #Inspector ID - 1-5 Inspectors
 
 #certifcation date logic
-randdays = np.random.randint(30, 501, size=days) #random amount of days for synthetic data generation
-last_cert_date = (date - pd.to_timedelta(randdays, unit="D")).strftime("%Y-%m-%d")
-is_certified = np.where(randdays <= 365, "Y", "N") #Check if inspector last cert date is within 365 days, else expired
 
+inspector_id = np.random.randint(1, 6, size=days) #Inspector ID - 1-5 Inspectors
+
+inspector_certificate = pd.to_datetime('2026-01-01') - pd.to_timedelta(np.random.randint(12, 30, size=6), unit="D") #Create set dates for inspector certificates
+
+last_cert_check = pd.DatetimeIndex(inspector_certificate[inspector_id]) #assign inspector certificate values to inspector id
+
+check_cert = (date - last_cert_check).days #calculate if its still valid
+
+is_certified = np.where(check_cert <= 548, "Y", "N") #Check if inspector last cert date is within  548 days (1.5 years), else expired
+
+last_cert_date = last_cert_check.strftime("%Y-%m-%d") #turn last cert check to string with format year-month-day
 
 #Convert date as data to make sure it can run
 date_as_data = date.strftime("%Y-%m-%d")
@@ -31,7 +38,7 @@ date_as_data = date.strftime("%Y-%m-%d")
 #Nominal Weight tests - 100g, 250g, 500g, 1000g
 nominal_weight_g = np.random.choice([100, 250, 500, 1000], size=days)
 
-#Error percentage, Minimum and maximum of at least and at most 75% to simulate possible fraud
+#Error percentage
 error_perc = np.random.uniform(-0.02, 0.02, size=days)
 
 #Reading Weight from using scale, difference varies based on error percentage
