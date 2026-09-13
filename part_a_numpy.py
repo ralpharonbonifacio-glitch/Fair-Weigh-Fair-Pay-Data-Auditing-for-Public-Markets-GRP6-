@@ -43,3 +43,15 @@ median_error = np.nanmedian(market_errors, axis=0)
 print("Markets:", markets)
 print("Mean error per market:", mean_error)
 print("Median error per market:", median_error)
+
+# Calculate 95% confidence interval
+n = np.sum(~np.isnan(market_errors), axis=0)
+std_error = np.nanstd(market_errors, axis=0, ddof=1) / np.sqrt(n)
+
+margin_error = 1.96 * std_error
+
+ci_lower = mean_error - margin_error
+ci_upper = mean_error + margin_error
+
+print("95% CI lower:", ci_lower)
+print("95% CI upper:", ci_upper)
