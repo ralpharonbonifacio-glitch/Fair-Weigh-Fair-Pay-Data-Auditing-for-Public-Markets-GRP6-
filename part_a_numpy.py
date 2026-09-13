@@ -69,3 +69,17 @@ print("Inspections outside tolerance:", outside_count)
 print("Total inspections per market:", total_count)
 print("Fraction outside tolerance:", outside_fraction)
 print("Percentage outside tolerance:", outside_percentage)
+
+# Identify markets with the highest and lowest error
+highest_outside_market = markets[np.argmax(outside_percentage)]
+highest_mean_market = markets[np.argmax(mean_error)]
+lowest_mean_market = markets[np.argmin(mean_error)]
+
+print("Market with highest outside-tolerance percentage:",
+      highest_outside_market)
+
+print("Market with highest mean error:",
+      highest_mean_market)
+
+print("Market with lowest mean error:",
+      lowest_mean_market)
