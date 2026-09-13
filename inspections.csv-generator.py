@@ -32,7 +32,7 @@ date_as_data = date.strftime("%Y-%m-%d")
 nominal_weight_g = np.random.choice([100, 250, 500, 1000], size=days)
 
 #Error percentage, Minimum and maximum of at least and at most 75% to simulate possible fraud
-error_perc = np.random.uniform(-0.75, 0.75, size=days)
+error_perc = np.random.uniform(-0.02, 0.02, size=days)
 
 #Reading Weight from using scale, difference varies based on error percentage
 reading_g = np.round(nominal_weight_g * (1 + error_perc), 2)
