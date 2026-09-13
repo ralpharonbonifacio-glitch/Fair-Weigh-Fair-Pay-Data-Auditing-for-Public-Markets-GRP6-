@@ -15,3 +15,17 @@ print(error_g[:5])
 
 print("Error in percent:")
 print(error_pct[:5])
+
+# Create masks for weighing errors
+under_mask = error_pct < -0.5
+over_mask = error_pct > 0.5
+outside_mask = under_mask | over_mask
+
+print("Under-weighing:")
+print(under_mask[:10])
+
+print("Over-weighing:")
+print(over_mask[:10])
+
+print("Outside tolerance:")
+print(outside_mask[:10])
