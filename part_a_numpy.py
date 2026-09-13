@@ -29,3 +29,17 @@ print(over_mask[:10])
 
 print("Outside tolerance:")
 print(outside_mask[:10])
+
+# Calculate mean and median error per market
+market_ids = df["market_id"].to_numpy()
+markets = np.unique(market_ids)
+
+market_mask = market_ids[:, np.newaxis] == markets[np.newaxis, :]
+market_errors = np.where(market_mask, error_pct[:, np.newaxis], np.nan)
+
+mean_error = np.nanmean(market_errors, axis=0)
+median_error = np.nanmedian(market_errors, axis=0)
+
+print("Markets:", markets)
+print("Mean error per market:", mean_error)
+print("Median error per market:", median_error)
