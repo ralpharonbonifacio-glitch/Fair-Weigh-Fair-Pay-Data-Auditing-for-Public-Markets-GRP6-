@@ -6,7 +6,7 @@ inspections = pd.read_csv("inspections.csv")
 prices = pd.read_csv("prices.csv")
 sales_samples = pd.read_csv("sales_samples.csv")
 
-#set date column as datetime, then sort the values
+#set date column as datetime, then sort the values so it doesnt error (IMPORTANT)
 for df in [inspections, prices, sales_samples]:
     df["date"] = pd.to_datetime(df["date"])
     df.sort_values("date", inplace=True)
@@ -17,7 +17,8 @@ to estimate expected loss per transaction
 '''
 
 inspections_sales_merge = pd.merge_asof(sales_samples, inspections, on="date",
-    by="stall_id", direction="nearest", tolerance=pd.Timedelta("7 days"))
+    by=["stall_id", "market_id"], direction="nearest", tolerance=pd.Timedelta("7 days"))
+
 
 '''
 Bring avg_price_per_kg from prices via key: date, market_id, commodity;
@@ -25,15 +26,34 @@ if dates don’t align,use last‐observation‐carried‐forward within 7 days
 '''
 
 all_merge = pd.merge_asof(inspections_sales_merge, prices, on="date", 
-    by=["market_id", "commodity"], direction="backward",tolerance=pd.Timedelta("7 days"))
+    by=["market_id", "commodity"], direction="backward", tolerance=pd.Timedelta("7 days"))
 
-#loss_php formula -  max(0, label_weight_kg - actual_weight_kg) * avg_price_per_kg
-loss_php = np.maximum(0, all_merge["label_weight_kg"] - all_merge["actual_weight_kg"]) * all_merge["avg_price_per_kg"]
+#loss_php formula - max(0, label_weight_kg - actual_weight_kg) * avg_price_per_kg
+all_merge["loss_php"] = np.maximum(0, all_merge["label_weight_kg"] - all_merge["actual_weight_kg"]) * all_merge["avg_price_per_kg"]
 
 '''
 Market X Commodity Table
 Median Error%, 90th percentile loss_php, share of uncertified scales
 '''
+
+#calculate error% you need it for market x commodity table
+all_merge["error_weight_perc"] = ((all_merge["actual_weight_kg"] - all_merge["label_weight_kg"]) / all_merge["label_weight_kg"]) * 100
+
+#Create the Market x Commodity Table
+market_commodity_table = (all_merge.groupby(["market_id", "commodity"])
+        .agg(median_error_perc=("error_weight_perc", "median"), 
+        loss_php_90th=("loss_php", lambda x: x.quantile(0.90)),
+        uncertified_share=("is_certified", lambda x: (x == "N").mean())
+        )
+        .round({
+        "median_error_perc": 2,
+        "loss_php_90th": 2,
+        "uncertified_share": 2
+    })
+        )
+
+print(market_commodity_table)
+
 
 
 
