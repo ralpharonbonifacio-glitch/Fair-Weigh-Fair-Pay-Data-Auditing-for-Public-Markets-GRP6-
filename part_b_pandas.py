@@ -11,6 +11,7 @@ for df in [inspections, prices, sales_samples]:
     df["date"] = pd.to_datetime(df["date"])
     df.sort_values("date", inplace=True)
 
+
 '''
 Join inspections with sales_samples by nearest date and stall (same week) 
 to estimate expected loss per transaction
@@ -52,8 +53,30 @@ market_commodity_table = (all_merge.groupby(["market_id", "commodity"])
     })
         )
 
+# Set options to show all rows and columns
+pd.set_option("display.max_rows", None)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", None)
+
 print(market_commodity_table)
 
 
+#Compute rolling 14-day under-weigh rate per market to detect drifts;
+#annotate dates post-calibration drives (if any).
+
+#create column "is under-weigh"
+all_merge["is_under_weigh"] = all_merge["actual_weight_kg"] < all_merge["label_weight_kg"]
 
 
+#set date as index so 14 day rolling rate works right and doesn't explode
+rollingrate = all_merge.set_index("date").sort_index()
+
+#compute the rolling 14-day under-weigh rate per market
+market_rolling_rate = (
+    rollingrate.groupby("market_id")["is_under_weigh"]
+    .rolling("14D")
+    .mean()
+    .round()
+)
+
+print(market_rolling_rate)
