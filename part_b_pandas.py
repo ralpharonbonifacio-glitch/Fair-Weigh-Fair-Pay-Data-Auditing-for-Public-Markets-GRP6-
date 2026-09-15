@@ -27,7 +27,13 @@ if dates don’t align,use last‐observation‐carried‐forward within 7 days
 all_merge = pd.merge_asof(inspections_sales_merge, prices, on="date", 
     by=["market_id", "commodity"], direction="backward",tolerance=pd.Timedelta("7 days"))
 
+#loss_php formula -  max(0, label_weight_kg - actual_weight_kg) * avg_price_per_kg
+loss_php = np.maximum(0, all_merge["label_weight_kg"] - all_merge["actual_weight_kg"]) * all_merge["avg_price_per_kg"]
 
+'''
+Market X Commodity Table
+Median Error%, 90th percentile loss_php, share of uncertified scales
+'''
 
 
 
