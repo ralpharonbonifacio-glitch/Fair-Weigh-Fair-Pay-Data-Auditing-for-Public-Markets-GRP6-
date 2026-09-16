@@ -95,3 +95,44 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
+loss_table = (
+    all_merge
+    .groupby(["market_id", "commodity"])["loss_php"]
+    .median()
+    .unstack()
+)
+
+print("\nMedian Expected Loss Table:")
+print(loss_table)
+
+loss_values = loss_table.to_numpy()
+
+plt.figure(figsize=(12, 6))
+
+plt.imshow(
+    loss_values,
+    aspect="auto"
+)
+
+plt.colorbar(
+    label="Median Expected Loss (PHP)"
+)
+
+plt.xticks(
+    np.arange(len(loss_table.columns)),
+    loss_table.columns,
+    rotation=45,
+    ha="right"
+)
+
+plt.yticks(
+    np.arange(len(loss_table.index)),
+    loss_table.index
+)
+
+plt.xlabel("Commodity")
+plt.ylabel("Market")
+plt.title("Median Expected Loss by Market and Commodity")
+
+plt.tight_layout()
+plt.show()
