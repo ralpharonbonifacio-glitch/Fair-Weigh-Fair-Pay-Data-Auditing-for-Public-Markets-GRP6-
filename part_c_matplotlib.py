@@ -44,3 +44,16 @@ all_merge["loss_php"] = (
     )
     * all_merge["avg_price_per_kg"]
 )
+
+all_merge["is_under_weigh"] = (
+    all_merge["actual_weight_kg"]
+    < all_merge["label_weight_kg"]
+)
+
+all_merge["error_weight_perc"] = (
+    (
+        all_merge["actual_weight_kg"]
+        - all_merge["label_weight_kg"]
+    )
+    / all_merge["label_weight_kg"]
+) * 100
