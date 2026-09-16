@@ -57,3 +57,41 @@ all_merge["error_weight_perc"] = (
     )
     / all_merge["label_weight_kg"]
 ) * 100
+
+rollingrate = (
+    all_merge
+    .set_index("date")
+    .sort_index()
+)
+
+market_rolling_rate = (
+    rollingrate
+    .groupby("market_id")["is_under_weigh"]
+    .rolling("14D")
+    .mean()
+)
+
+markets = sorted(all_merge["market_id"].unique())
+
+plt.figure(figsize=(10, 6))
+
+for market in markets:
+
+    market_data = market_rolling_rate[market]
+
+    plt.plot(
+        market_data.index,
+        market_data.values * 100,
+        label="Market " + str(market)
+    )
+
+plt.xlabel("Date")
+plt.ylabel("14-Day Rolling Under-Weigh Rate (%)")
+plt.title("14-Day Rolling Under-Weigh Rate by Market")
+
+plt.legend()
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.show()
+
