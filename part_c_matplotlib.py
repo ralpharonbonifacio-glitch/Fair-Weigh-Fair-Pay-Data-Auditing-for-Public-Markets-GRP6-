@@ -35,3 +35,12 @@ all_merge = pd.merge_asof(
     direction="backward",
     tolerance=pd.Timedelta("7 days")
 )
+
+all_merge["loss_php"] = (
+    np.maximum(
+        0,
+        all_merge["label_weight_kg"]
+        - all_merge["actual_weight_kg"]
+    )
+    * all_merge["avg_price_per_kg"]
+)
