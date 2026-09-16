@@ -146,3 +146,19 @@ calibration_date = calibration["date"][0]
 
 print("\nCalibration campaign:")
 print(calibration)
+
+before_data = all_merge[
+    (all_merge["date"] >= calibration_date - pd.Timedelta(days=30))
+    & (all_merge["date"] < calibration_date)
+]
+
+after_data = all_merge[
+    (all_merge["date"] > calibration_date)
+    & (all_merge["date"] <= calibration_date + pd.Timedelta(days=30))
+]
+
+print("\n30 days before calibration:")
+print(before_data.shape)
+
+print("\n30 days after calibration:")
+print(after_data.shape)
