@@ -26,3 +26,12 @@ inspections_sales_merge = pd.merge_asof(
     direction="nearest",
     tolerance=pd.Timedelta("7 days")
 )
+
+all_merge = pd.merge_asof(
+    inspections_sales_merge,
+    prices,
+    on="date",
+    by=["market_id", "commodity"],
+    direction="backward",
+    tolerance=pd.Timedelta("7 days")
+)
