@@ -162,3 +162,54 @@ print(before_data.shape)
 
 print("\n30 days after calibration:")
 print(after_data.shape)
+
+fig, axes = plt.subplots(
+    1,
+    2,
+    figsize=(10, 5)
+)
+
+# Before calibration
+axes[0].hist(
+    before_data["error_weight_perc"],
+    bins=10
+)
+
+axes[0].set_title(
+    "30 Days Before Calibration"
+)
+
+axes[0].set_xlabel(
+    "Weight Error (%)"
+)
+
+axes[0].set_ylabel(
+    "Frequency"
+)
+
+
+# After calibration
+axes[1].hist(
+    after_data["error_weight_perc"],
+    bins=10
+)
+
+axes[1].set_title(
+    "30 Days After Calibration"
+)
+
+axes[1].set_xlabel(
+    "Weight Error (%)"
+)
+
+axes[1].set_ylabel(
+    "Frequency"
+)
+
+
+fig.suptitle(
+    "Weight Error Distribution Before vs After Calibration"
+)
+
+plt.tight_layout()
+plt.show()
