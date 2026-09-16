@@ -136,3 +136,13 @@ plt.title("Median Expected Loss by Market and Commodity")
 
 plt.tight_layout()
 plt.show()
+
+calibration = pd.DataFrame({
+    "campaign": ["Calibration Campaign"],
+    "date": [pd.Timestamp("2026-07-01")]
+})
+
+calibration_date = calibration["date"][0]
+
+print("\nCalibration campaign:")
+print(calibration)
