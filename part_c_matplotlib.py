@@ -17,3 +17,12 @@ sales_samples["date"] = pd.to_datetime(sales_samples["date"])
 inspections.sort_values("date", inplace=True)
 prices.sort_values("date", inplace=True)
 sales_samples.sort_values("date", inplace=True)
+
+inspections_sales_merge = pd.merge_asof(
+    sales_samples,
+    inspections,
+    on="date",
+    by=["stall_id", "market_id"],
+    direction="nearest",
+    tolerance=pd.Timedelta("7 days")
+)
