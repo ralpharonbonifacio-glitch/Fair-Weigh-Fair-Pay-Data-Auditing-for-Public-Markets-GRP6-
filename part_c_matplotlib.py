@@ -9,3 +9,11 @@ sales_samples = pd.read_csv("sales_samples.csv")
 print("Inspections:", inspections.shape)
 print("Prices:", prices.shape)
 print("Sales samples:", sales_samples.shape)
+
+inspections["date"] = pd.to_datetime(inspections["date"])
+prices["date"] = pd.to_datetime(prices["date"])
+sales_samples["date"] = pd.to_datetime(sales_samples["date"])
+
+inspections.sort_values("date", inplace=True)
+prices.sort_values("date", inplace=True)
+sales_samples.sort_values("date", inplace=True)
