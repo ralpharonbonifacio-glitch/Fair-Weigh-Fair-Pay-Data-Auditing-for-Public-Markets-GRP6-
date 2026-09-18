@@ -1,0 +1,224 @@
+import numpy as np 
+import pandas as pd 
+import matplotlib.pyplot as plt
+
+inspections = pd.read_csv("inspections.csv")
+prices = pd.read_csv("prices.csv")
+sales_samples = pd.read_csv("sales_samples.csv")
+
+print("Inspections:", inspections.shape)
+print("Prices:", prices.shape)
+print("Sales samples:", sales_samples.shape)
+
+inspections["date"] = pd.to_datetime(inspections["date"])
+prices["date"] = pd.to_datetime(prices["date"])
+sales_samples["date"] = pd.to_datetime(sales_samples["date"])
+
+inspections.sort_values("date", inplace=True)
+prices.sort_values("date", inplace=True)
+sales_samples.sort_values("date", inplace=True)
+
+inspections_sales_merge = pd.merge_asof(
+    sales_samples,
+    inspections,
+    on="date",
+    by=["stall_id", "market_id"],
+    direction="nearest",
+    tolerance=pd.Timedelta("7 days")
+)
+
+all_merge = pd.merge_asof(
+    inspections_sales_merge,
+    prices,
+    on="date",
+    by=["market_id", "commodity"],
+    direction="backward",
+    tolerance=pd.Timedelta("7 days")
+)
+
+all_merge["loss_php"] = (
+    np.maximum(
+        0,
+        all_merge["label_weight_kg"]
+        - all_merge["actual_weight_kg"]
+    )
+    * all_merge["avg_price_per_kg"]
+)
+
+all_merge["is_under_weigh"] = (
+    all_merge["actual_weight_kg"]
+    < all_merge["label_weight_kg"]
+)
+
+all_merge["error_weight_perc"] = (
+    (
+        all_merge["actual_weight_kg"]
+        - all_merge["label_weight_kg"]
+    )
+    / all_merge["label_weight_kg"]
+) * 100
+
+rollingrate = (
+    all_merge
+    .set_index("date")
+    .sort_index()
+)
+
+market_rolling_rate = (
+    rollingrate
+    .groupby("market_id")["is_under_weigh"]
+    .rolling("14D")
+    .mean()
+)
+
+markets = sorted(all_merge["market_id"].unique())
+
+plt.figure(figsize=(10, 6))
+
+for market in markets:
+
+    market_data = market_rolling_rate[market]
+
+    plt.plot(
+        market_data.index,
+        market_data.values * 100,
+        label="Market " + str(market)
+    )
+
+plt.xlabel("Date")
+plt.ylabel("14-Day Rolling Under-Weigh Rate (%)")
+plt.title("14-Day Rolling Under-Weigh Rate by Market")
+
+plt.legend()
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.show()
+
+loss_table = (
+    all_merge
+    .groupby(["market_id", "commodity"])["loss_php"]
+    .median()
+    .unstack()
+)
+
+print("\nMedian Expected Loss Table:")
+print(loss_table)
+
+loss_values = loss_table.to_numpy()
+
+plt.figure(figsize=(12, 6))
+
+plt.imshow(
+    loss_values,
+    aspect="auto"
+)
+
+plt.colorbar(
+    label="Median Expected Loss (PHP)"
+)
+
+plt.xticks(
+    np.arange(len(loss_table.columns)),
+    loss_table.columns,
+    rotation=45,
+    ha="right"
+)
+
+plt.yticks(
+    np.arange(len(loss_table.index)),
+    loss_table.index
+)
+
+plt.xlabel("Commodity")
+plt.ylabel("Market")
+plt.title("Median Expected Loss by Market and Commodity")
+
+plt.tight_layout()
+plt.show()
+
+calibration = pd.DataFrame({
+    "campaign": ["Calibration Campaign"],
+    "date": [pd.Timestamp("2026-07-01")]
+})
+
+calibration_date = calibration["date"][0]
+
+print("\nCalibration campaign:")
+print(calibration)
+
+before_data = all_merge[
+    (all_merge["date"] >= calibration_date - pd.Timedelta(days=30))
+    & (all_merge["date"] < calibration_date)
+]
+
+after_data = all_merge[
+    (all_merge["date"] > calibration_date)
+    & (all_merge["date"] <= calibration_date + pd.Timedelta(days=30))
+]
+
+print("\n30 days before calibration:")
+print(before_data.shape)
+
+print("\n30 days after calibration:")
+print(after_data.shape)
+
+before_under = before_data[
+    before_data["is_under_weigh"]
+]["error_weight_perc"]
+
+after_under = after_data[
+    after_data["is_under_weigh"]
+]["error_weight_perc"]
+
+
+fig, axes = plt.subplots(
+    1,
+    2,
+    figsize=(10, 5)
+)
+
+# Before calibration
+axes[0].hist(
+    before_under,
+    bins=10
+)
+
+axes[0].set_title(
+    "30 Days Before Calibration"
+)
+
+axes[0].set_xlabel(
+    "Under-Weigh Error (%)"
+)
+
+axes[0].set_ylabel(
+    "Frequency"
+)
+
+
+# After calibration
+axes[1].hist(
+    after_under,
+    bins=10
+)
+
+axes[1].set_title(
+    "30 Days After Calibration"
+)
+
+axes[1].set_xlabel(
+    "Under-Weigh Error (%)"
+)
+
+axes[1].set_ylabel(
+    "Frequency"
+)
+
+
+fig.suptitle(
+    "Under-Weigh Distribution Before vs After Calibration"
+)
+
+plt.tight_layout()
+plt.show()

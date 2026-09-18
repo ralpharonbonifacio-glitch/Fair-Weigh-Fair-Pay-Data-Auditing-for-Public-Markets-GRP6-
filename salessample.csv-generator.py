@@ -1,0 +1,62 @@
+import numpy as np
+import pandas as pd
+
+np.random.seed(3)
+
+'For generating sales_samples.csv'
+
+df_inspections = pd.read_csv("inspections.csv")
+df_prices = pd.read_csv("prices.csv")
+
+
+date = df_prices['date'].unique()
+market_id = df_inspections['market_id'].values 
+stall_id = df_inspections['stall_id'].values
+commodity = df_prices['commodity'].values
+
+label_weight_kg = np.random.choice(
+    [0.5, 1.0, 1.5, 2.0],
+    size=len(df_inspections))
+
+error_perc = np.random.uniform(-0.0075, 0.0025, size=len(df_inspections))
+actual_weight_kg = np.round(label_weight_kg * (1 + error_perc), 3)
+
+df_sales = pd.DataFrame({
+
+    'date': date,
+
+    'market_id': market_id,
+
+    'stall_id': stall_id,
+
+    'commodity': commodity,
+
+    'label_weight_kg': label_weight_kg,
+
+    'actual_weight_kg': actual_weight_kg
+})
+price_lookup = df_prices[['date', 'market_id', 'commodity', 'avg_price_per_kg']]
+
+df_sales = df_sales.merge(
+    price_lookup,
+    on=['date', 'market_id', 'commodity'],
+    how='left'
+)
+
+paid_amount_php = np.round(
+    df_sales['label_weight_kg'] *
+    df_sales['avg_price_per_kg'],
+    2)
+
+df_sales['paid_amount_php'] = paid_amount_php
+df_sales = df_sales[
+       ['date',
+        'market_id',
+        'stall_id',
+        'commodity',
+        'paid_amount_php',
+        'label_weight_kg',
+        'actual_weight_kg']]
+df_sales.to_csv("sales_samples.csv", index=False)
+print("sales_samples.csv created")
+print(df_sales.head())
