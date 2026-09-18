@@ -76,7 +76,6 @@ market_rolling_rate = (
     rollingrate.groupby("market_id")["is_under_weigh"]
     .rolling("14D")
     .mean()
-    .round()
 )
 
 print(market_rolling_rate)
