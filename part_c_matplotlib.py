@@ -163,6 +163,15 @@ print(before_data.shape)
 print("\n30 days after calibration:")
 print(after_data.shape)
 
+before_under = before_data[
+    before_data["is_under_weigh"]
+]["error_weight_perc"]
+
+after_under = after_data[
+    after_data["is_under_weigh"]
+]["error_weight_perc"]
+
+
 fig, axes = plt.subplots(
     1,
     2,
@@ -171,7 +180,7 @@ fig, axes = plt.subplots(
 
 # Before calibration
 axes[0].hist(
-    before_data["error_weight_perc"],
+    before_under,
     bins=10
 )
 
@@ -180,7 +189,7 @@ axes[0].set_title(
 )
 
 axes[0].set_xlabel(
-    "Weight Error (%)"
+    "Under-Weigh Error (%)"
 )
 
 axes[0].set_ylabel(
@@ -190,7 +199,7 @@ axes[0].set_ylabel(
 
 # After calibration
 axes[1].hist(
-    after_data["error_weight_perc"],
+    after_under,
     bins=10
 )
 
@@ -199,7 +208,7 @@ axes[1].set_title(
 )
 
 axes[1].set_xlabel(
-    "Weight Error (%)"
+    "Under-Weigh Error (%)"
 )
 
 axes[1].set_ylabel(
@@ -208,7 +217,7 @@ axes[1].set_ylabel(
 
 
 fig.suptitle(
-    "Weight Error Distribution Before vs After Calibration"
+    "Under-Weigh Distribution Before vs After Calibration"
 )
 
 plt.tight_layout()
